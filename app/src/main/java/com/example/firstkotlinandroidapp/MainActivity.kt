@@ -4,7 +4,12 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.view.animation.AnimationUtils
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -31,6 +36,8 @@ class MainActivity : AppCompatActivity() {
         Log.d(TAG, "onCreate called. score is : $score")
 
         tapMeButton.setOnClickListener{
+            val bounceAnimation = AnimationUtils.loadAnimation(this, R.anim.bounce)
+            it.startAnimation(bounceAnimation)
             incrementScore()
         }
 
@@ -41,8 +48,29 @@ class MainActivity : AppCompatActivity() {
         }else{
             resetGame()
         }
+    }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu, menu)
 
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.actionAbout){
+            showInfo()
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun showInfo(){
+        val dialogTitle = getString(R.string.aboutTitle, BuildConfig.VERSION_NAME)
+        val dialogMessage = getString(R.string.aboutMessage)
+
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(dialogTitle)
+        builder.setMessage(dialogMessage)
+        builder.create().show()
     }
 
     private fun restoreGame(){
@@ -111,6 +139,9 @@ class MainActivity : AppCompatActivity() {
         score++
         val newScore = getString(R.string.your_score, score)
         gameScoreTextView.text = newScore
+
+        val blinkAnimation = AnimationUtils.loadAnimation(this, R.anim.blink)
+        gameScoreTextView.startAnimation(blinkAnimation)
     }
 
     private fun startGame(){
